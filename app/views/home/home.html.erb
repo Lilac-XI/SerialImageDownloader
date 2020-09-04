@@ -1,0 +1,6 @@
+<%= form_with url: edit_path do |form| %>
+    <%= form.text_field :download_link %>
+    <%= form.submit %>
+<% end %>
+
+<%= render :partial => "link" %>
