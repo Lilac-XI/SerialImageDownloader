@@ -76,12 +76,22 @@ class HomeController < ApplicationController
             result.save ("results/result.pdf")
             GC.start
         else
-            "Under 50 page mode."
+            puts "Under 50 page mode."
+            title = Magick::Image.read(targets[0])[0]
+            x_resolution = title.x_resolution
+            y_resolution = title.y_resolution
             targets.each_with_index do |link,i|
                 puts link
                 begin
                     image = Magick::Image.read(link)[0]
+                    if image.x_resolution != x_resolution || image.y_resolution != y_resolution
+                        puts "#{i} resize"
+                        image.x_resolution = x_resolution
+                        image.y_resolution = y_resolution
+                    end
+                    # image.class_type = Magick::DirectClass
                     image_files.push image
+                    image.write("results/#{i}.jpg")
                 rescue => e
                     puts "エラー: #{e}"
                 end
@@ -93,7 +103,7 @@ class HomeController < ApplicationController
     end
 
     def download
-        filepath = Rails.root.join("","result.pdf")
+        filepath = Rails.root.join("results","result.pdf")
         puts filepath
         filename = "#{Date.today.to_time.strftime("%y-%m-%d-%H-%M-%S")}.pdf"
         stat = File::stat(filepath)
