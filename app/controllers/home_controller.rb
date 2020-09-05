@@ -89,9 +89,6 @@ class HomeController < ApplicationController
                         image.x_resolution = x_resolution
                         image.y_resolution = y_resolution
                     end
-                    # image.class_type = Magick::DirectClass
-                    image_files.push image
-                    image.write("results/#{i}.jpg")
                 rescue => e
                     puts "エラー: #{e}"
                 end
