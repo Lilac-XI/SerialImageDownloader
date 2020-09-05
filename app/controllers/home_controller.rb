@@ -45,36 +45,51 @@ class HomeController < ApplicationController
         end
         
         targets =  similar_links.max
-        pdfs = Array.new
-        num = 0
+        
         image_files = Magick::ImageList.new()
-        pdfs = Array.new
         puts "start"
-        targets.each_with_index do |link,i|
-            puts link
-            begin
-                image = Magick::Image.read(link)[0]
-                image_files.push image
-                if i != 0 && (i % 50 == 0 || i == targets.size)
-                    image_files.write("result/result#{num}.pdf")
-                    pdfs[num] = "result/result#{num}.pdf"
-                    num = num + 1
-                    image_files = Magick::ImageList.new()
-                    GC.start
+        if targets.size > 50
+            puts "Over 50 page mode."
+            pdfs = Array.new
+            num = 0
+            targets.each_with_index do |link,i|
+                puts link
+                begin
+                    image = Magick::Image.read(link)[0]
+                    image_files.push image
+                    if i != 0 && (i % 50 == 0)
+                        image_files.write("results/result#{num}.pdf")
+                        pdfs[num] = "results/result#{num}.pdf"
+                        num = num + 1
+                        image_files = Magick::ImageList.new()
+                        GC.start
+                    end
+                rescue => e
+                    puts "エラー: #{e}"
                 end
-            rescue => e
-                puts "エラー: #{e}"
             end
+            puts "combine pdf"
+            result = CombinePDF.new
+            pdfs.each do |pdf_link|
+                result << CombinePDF.load(pdf_link)
+            end
+            result.save ("results/result.pdf")
+            GC.start
+        else
+            "Under 50 page mode."
+            targets.each_with_index do |link,i|
+                puts link
+                begin
+                    image = Magick::Image.read(link)[0]
+                    image_files.push image
+                rescue => e
+                    puts "エラー: #{e}"
+                end
+            end
+            puts "save pdf"
+            image_files.write("results/result.pdf")
+            GC.start
         end
-        puts "combine pdf"
-        result = CombinePDF.new
-        puts pdfs
-        pdfs.each do |pdf_link|
-            result << CombinePDF.load(pdf_link)
-        end
-        result.save ("result.pdf")
-        Dir.chdir "result"
-        FileUtils.rm(Dir.glob('*.*'))
     end
 
     def download
