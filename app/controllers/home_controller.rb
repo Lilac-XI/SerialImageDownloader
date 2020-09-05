@@ -2,6 +2,8 @@ class HomeController < ApplicationController
     require "open-uri"
     require "trigram"
     require "rmagick"
+    require "combine_pdf"
+    require "fileutils"
     def home
         @donwload = true
     end
@@ -43,17 +45,36 @@ class HomeController < ApplicationController
         end
         
         targets =  similar_links.max
+        pdfs = Array.new
+        num = 0
         image_files = Magick::ImageList.new()
+        pdfs = Array.new
         puts "start"
-        targets.each do |link|
+        targets.each_with_index do |link,i|
             puts link
-            image = Magick::Image.read(link)[0]
-            image_files.push image
+            begin
+                image = Magick::Image.read(link)[0]
+                image_files.push image
+                if i != 0 && (i % 50 == 0 || i == targets.size)
+                    image_files.write("result/result#{num}.pdf")
+                    pdfs[num] = "result/result#{num}.pdf"
+                    num = num + 1
+                    image_files = Magick::ImageList.new()
+                    GC.start
+                end
+            rescue => e
+                puts "エラー: #{e}"
+            end
         end
-        filename = "#{Date.today.to_time.strftime("%y-%m-%d-%H-%M-%S")}.pdf"
-        puts "save_start"
-        image_files.write("result.pdf")
-        puts "save_end"
+        puts "combine pdf"
+        result = CombinePDF.new
+        puts pdfs
+        pdfs.each do |pdf_link|
+            result << CombinePDF.load(pdf_link)
+        end
+        result.save ("result.pdf")
+        Dir.chdir "result"
+        FileUtils.rm(Dir.glob('*.*'))
     end
 
     def download

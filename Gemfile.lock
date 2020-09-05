@@ -71,6 +71,8 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
+    combine_pdf (1.0.18)
+      ruby-rc4 (>= 0.1.5)
     concurrent-ruby (1.1.7)
     crass (1.0.6)
     erubi (1.9.0)
@@ -139,6 +141,7 @@ GEM
       ffi (~> 1.0)
     regexp_parser (1.7.1)
     rmagick (4.1.2)
+    ruby-rc4 (0.1.5)
     ruby_dep (1.5.0)
     rubyzip (2.3.0)
     sass (3.7.4)
@@ -198,6 +201,7 @@ DEPENDENCIES
   capybara (>= 2.15)
   chromedriver-helper
   coffee-rails (~> 4.2)
+  combine_pdf
   jbuilder (~> 2.5)
   listen (>= 3.0.5, < 3.2)
   pg
