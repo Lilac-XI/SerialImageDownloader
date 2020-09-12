@@ -1,6 +1,8 @@
 <div class = "container">
     <div class = "row">
         <div class = "col-md-12 col-sm-12 col-xs-12 text-center">
+            <%= button_to "download", "/download", method: :get, class: "btn btn-primary" %>
+            <br>
             <%= form_with url: create_path do |form| %>
                 <%= form.text_field :download_link ,autocomplete: "off" ,class: "justify-content-center"%>
                 <%= form.submit id: "submit", class: "btn" ,onclick: "visibleMessage()"%>

@@ -66,3 +66,6 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem "trigram"
 gem "rmagick"
 gem "combine_pdf"
+
+gem 'bootstrap', '~> 4.1.1'
+gem 'jquery-rails'
