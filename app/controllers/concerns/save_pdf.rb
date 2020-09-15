@@ -1,12 +1,10 @@
 module SavePDF extend ActiveSupport::Concern
-    require "combine_pdf"
+    require "rmagick"
 
-    def combine(path_list)
-        pdf = CombinePDF.new
-        path_list.each do |pdf_path|
-            pdf << CombinePDF.load(pdf_path)
-        end
-        pdf.save ("results/result.pdf")
+    def save_pdf(image_files, path)
+        image_files.write(path)
+        GC.start
+        FileUtils.rm(Dir.glob("/tmp/magick-*"))
     end
 
 end
